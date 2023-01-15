@@ -1,6 +1,6 @@
 import { Box, SimpleGrid, Skeleton } from '@chakra-ui/react';
-import { useFilmsQuery } from '../generated/graphql';
-import FilmCard from './film/FilmCard';
+import { useFilmsQuery } from '../../generated/graphql';
+import FilmCard from './FilmCard';
 
 export default function FlimList(): JSX.Element {
   const { loading, error, data } = useFilmsQuery();
