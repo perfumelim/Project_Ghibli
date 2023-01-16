@@ -1,11 +1,17 @@
 import { Box, SimpleGrid, Skeleton } from '@chakra-ui/react';
+import { Waypoint } from 'react-waypoint';
 import { useFilmsQuery } from '../../generated/graphql';
 import FilmCard from './FilmCard';
 
 export default function FlimList(): JSX.Element {
-  const { loading, error, data } = useFilmsQuery();
+  const LIMIT = 6;
+  const { loading, error, data, fetchMore } = useFilmsQuery({
+    variables: {
+      limit: LIMIT,
+      cursor: 1,
+    },
+  });
 
-  if (loading) return <p>Loading...</p>;
   if (error) return <p>{error.message}</p>;
 
   return (
@@ -13,8 +19,20 @@ export default function FlimList(): JSX.Element {
       {loading && new Array(6).fill(0).map((x) => <Skeleton key={x} height="400px" />)}
       {!loading &&
         data &&
-        data.films.map((film, i) => (
+        data.films.films.map((film, i) => (
           <Box key={film.id}>
+            {data.films.cursor && i === data.films.films.length - LIMIT / 2 && (
+              <Waypoint
+                onEnter={() => {
+                  fetchMore({
+                    variables: {
+                      limit: LIMIT,
+                      cursor: data.films.cursor,
+                    },
+                  });
+                }}
+              />
+            )}
             <FilmCard film={film} />
           </Box>
         ))}
