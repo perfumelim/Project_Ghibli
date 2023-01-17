@@ -3,7 +3,7 @@ import { Waypoint } from 'react-waypoint';
 import { useFilmsQuery } from '../../generated/graphql';
 import FilmCard from './FilmCard';
 
-export default function FlimList(): JSX.Element {
+export default function FilmList(): JSX.Element {
   const LIMIT = 6;
   const { loading, error, data, fetchMore } = useFilmsQuery({
     variables: {
