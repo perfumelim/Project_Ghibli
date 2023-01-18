@@ -1,11 +1,11 @@
-import { Spinner, Text, Box } from '@chakra-ui/react';
+import { Spinner, Text } from '@chakra-ui/react';
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { Params, useParams } from 'react-router-dom';
 import CommonLayout from '../components/CommonLayout';
 import FilmDetail from '../components/film/FilmDetail';
 import { useFilmQuery } from '../generated/graphql';
 
-interface FilmPageParams {
+interface FilmPageParams extends Params {
   filmId: string;
 }
 

@@ -9,14 +9,13 @@ import {
   Text,
   useColorModeValue,
 } from '@chakra-ui/react';
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { FilmsQuery } from '../../generated/graphql';
 
 interface FilmCardProps {
   film: FilmsQuery['films']['films'][0];
 }
-export default function FilmCard({ film }: FilmCardProps): React.ReactElement {
+export default function FilmCard({ film }: FilmCardProps) {
   return (
     <LinkBox as="article" my={6}>
       <Box maxW="300px" w="full" rounded="md" px={{ base: 1, md: 3 }} pt={3} overflow="hidden">

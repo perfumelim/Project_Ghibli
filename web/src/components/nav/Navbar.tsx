@@ -30,14 +30,13 @@ export default function Navbar() {
         <Stack justify="flex-end" direction="row" spacing={6}>
           <ColorModeSwitcher />
           <Button fontSize="sm" fontWeight={400} variant="link" as={RouterLink} to="/login">
-            Login
+            로그인
           </Button>
           <Button
             display={{ base: 'none', md: 'inline-flex' }}
             fontSize="sm"
             fontWeight={600}
-            href="/signup"
-            colorScheme="teal"
+            colorScheme="yellow"
             as={RouterLink}
             to="/signup"
           >
