@@ -1,22 +1,21 @@
-import "reflect-metadata";
-import express from "express";
-import { ApolloServer} from "apollo-server-express";
-import { ApolloServerPluginLandingPageLocalDefault } from "apollo-server-core";
-import http from "http";
-import { FilmResolver } from "./resolvers/Film";
-import { buildSchema } from "type-graphql";
-import { CutResolver } from "./resolvers/Cut";
-import {createDB} from './db/db-client'
-import { UserResolver } from "./resolvers/User";
+import 'reflect-metadata';
+import express from 'express';
+import { ApolloServer } from 'apollo-server-express';
+import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
+import http from 'http';
+import { FilmResolver } from './resolvers/Film';
+import { buildSchema } from 'type-graphql';
+import { CutResolver } from './resolvers/Cut';
+import { createDB } from './db/db-client';
+import { UserResolver } from './resolvers/User';
 
 async function main() {
-  await createDB();
   const app = express();
 
   const apolloServer = new ApolloServer({
-  schema: await buildSchema({
-    resolvers: [FilmResolver, CutResolver, UserResolver]
-  }),
+    schema: await buildSchema({
+      resolvers: [FilmResolver, CutResolver, UserResolver],
+    }),
     plugins: [ApolloServerPluginLandingPageLocalDefault()],
   });
   await apolloServer.start();
@@ -25,7 +24,7 @@ async function main() {
   const httpServer = http.createServer(app);
 
   httpServer.listen(process.env.PORT || 4000, () => {
-    if (process.env.NODE_ENV !== "production") {
+    if (process.env.NODE_ENV !== 'production') {
       console.log(`
           server started on => http://localhost:4000
           graphql playground => http://localhost:4000/graphql`);
