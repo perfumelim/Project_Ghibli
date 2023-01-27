@@ -6,10 +6,11 @@ import http from 'http';
 import { FilmResolver } from './resolvers/Film';
 import { buildSchema } from 'type-graphql';
 import { CutResolver } from './resolvers/Cut';
-import { createDB } from './db/db-client';
+import { createConnection} from './db/db-client';
 import { UserResolver } from './resolvers/User';
 
 async function main() {
+  await createConnection();
   const app = express();
 
   const apolloServer = new ApolloServer({

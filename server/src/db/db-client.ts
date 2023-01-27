@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm';
-import User from '..//entities/User';
+import User from '../entities/User';
 
 export const createDB = new DataSource({
   type: 'mysql',
@@ -13,4 +13,9 @@ export const createDB = new DataSource({
   entities: [User],
 });
 
-createDB.connect();
+export function createConnection(): Promise<DataSource> {
+  return createDB.initialize();
+}
+
+
+
