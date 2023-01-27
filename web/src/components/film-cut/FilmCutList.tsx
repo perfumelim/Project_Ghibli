@@ -21,7 +21,7 @@ export default function FilmCutList({ filmId, onClick }: FilmCutListProps): Reac
   return (
     <SimpleGrid my={4} columns={[1, 2, null, 3]} spacing={[2, null, 8]}>
       {data?.cuts.map((cut) => (
-        <LazyLoad height={200} once key={cut.id}>
+        <LazyLoad height={200} once key={`cut_${cut.id}`}>
           <LinkBox as="article">
             <Box>
               <LinkOverlay cursor="pointer" onClick={() => onClick(cut.id)}>
