@@ -28,21 +28,22 @@ function SignUpRealForm() {
 
   const onSubmit = async (data: SignUpMutationVariables) => {
     const { signUpInput } = data;
-    return signUp({ variables: { signUpInput } }).then((res) => {
-      if (res.data?.signUp) {
-        toast({ title: '회원가입을 환영합니다!', status: 'success' });
-        navigate('/');
-      } else {
-        toast({
-          title: '회원가입 도중 문제가 발생했습니다.',
-          status: 'error',
-        });
-      }
-    });
-    // .catch((err) => {
-    //   toast({ title: '이메일 또는 아이디가 중복됩니다.', status: 'error' });
-    //   return err;
-    // });
+    return signUp({ variables: { signUpInput } })
+      .then((res) => {
+        if (res.data?.signUp) {
+          toast({ title: '회원가입을 환영합니다!', status: 'success' });
+          navigate('/');
+        } else {
+          toast({
+            title: '회원가입 도중 문제가 발생했습니다.',
+            status: 'error',
+          });
+        }
+      })
+      .catch((err) => {
+        toast({ title: '이메일 또는 아이디가 중복됩니다.', status: 'error' });
+        return err;
+      });
   };
 
   return (

@@ -2,6 +2,7 @@ import argon2  from "argon2";
 import { IsEmail, IsString } from "class-validator";
 import { Arg, Field, InputType, Mutation, ObjectType, Resolver } from "type-graphql";
 import User from "../entities/User";
+import { createAccessToken } from "../utils/jwt-auth";
 
 @InputType()
 export class SignUpInput {
@@ -71,6 +72,8 @@ export class UserResolver {
           {field: 'password', message: '비밀번호를 올바르게 입력해주세요.'}
         ]
       };
-      return {user};
+
+      const accessToken = createAccessToken(user);
+      return {user, accessToken};
     } 
 }
