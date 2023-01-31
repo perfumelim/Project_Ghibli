@@ -3,7 +3,7 @@ import { IsEmail, IsString } from "class-validator";
 import { MyContext } from "../apollo/createApolloServer";
 import { Arg, Ctx, Field, InputType, Mutation, ObjectType, Query, Resolver, UseMiddleware } from "type-graphql";
 import User from "../entities/User";
-import { createAccessToken } from "../utils/jwt-auth";
+import { createAccessToken, createRefreshToken, setRefreshTokenHeader } from "../utils/jwt-auth";
 import { isAuthenticated } from "../middlewares/isAuthenticated";
 
 @InputType()
@@ -66,7 +66,9 @@ export class UserResolver {
 
   @Mutation(()=> LoginResponse)
   public async login(
-    @Arg('loginInput') loginInput: LoginInput,): Promise<LoginResponse> {
+    @Arg('loginInput') loginInput: LoginInput,
+    @Ctx() {res}: MyContext,
+    ): Promise<LoginResponse> {
       const {emailOrUsername, password} = loginInput;
 
       const user = await User.findOne({where: [{email: emailOrUsername}, {username: emailOrUsername}]});
@@ -83,6 +85,10 @@ export class UserResolver {
       };
 
       const accessToken = createAccessToken(user);
+      const refreshToken = createRefreshToken(user);
+
+      setRefreshTokenHeader(res, refreshToken)
+
       return {user, accessToken};
     } 
 }
