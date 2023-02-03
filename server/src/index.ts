@@ -3,10 +3,12 @@ import http from 'http';
 import 'reflect-metadata';
 import createApolloServer from './apollo/createApolloServer';
 import { createConnection } from './db/db-client';
+import cookieParser from 'cookie-parser';
 
 async function main() {
   await createConnection();
   const app = express();
+  app.use(cookieParser());
 
   const apolloServer = await createApolloServer();
   await apolloServer.start();

@@ -1,9 +1,10 @@
 import argon2  from "argon2";
+import jwt from 'jsonwebtoken';
 import { IsEmail, IsString } from "class-validator";
 import { MyContext } from "../apollo/createApolloServer";
 import { Arg, Ctx, Field, InputType, Mutation, ObjectType, Query, Resolver, UseMiddleware } from "type-graphql";
 import User from "../entities/User";
-import { createAccessToken, createRefreshToken, setRefreshTokenHeader } from "../utils/jwt-auth";
+import { createAccessToken, createRefreshToken, REFRESH_JWT_SECRET_KEY, setRefreshTokenHeader } from "../utils/jwt-auth";
 import { isAuthenticated } from "../middlewares/isAuthenticated";
 
 @InputType()
@@ -40,6 +41,11 @@ class LoginResponse {
   accessToken?: string;
 }
 
+@ObjectType({description: '액세스 토큰 새로고침 반환 데이터'})
+class RefreshAccessTokenResponse {
+  @Field() accessToken: string;
+}
+
 @Resolver(User)
 export class UserResolver {
   @UseMiddleware(isAuthenticated)
@@ -67,7 +73,7 @@ export class UserResolver {
   @Mutation(()=> LoginResponse)
   public async login(
     @Arg('loginInput') loginInput: LoginInput,
-    @Ctx() {res}: MyContext,
+    @Ctx() {res, redis}: MyContext,
     ): Promise<LoginResponse> {
       const {emailOrUsername, password} = loginInput;
 
@@ -84,11 +90,53 @@ export class UserResolver {
         ]
       };
 
+
       const accessToken = createAccessToken(user);
       const refreshToken = createRefreshToken(user);
 
+      // 리프레시 토큰 redis 적재
+      await redis.set(String(user.id), refreshToken);
+      // 쿠키로 리프레시 토큰 전송
       setRefreshTokenHeader(res, refreshToken)
 
       return {user, accessToken};
     } 
+
+    @Mutation(()=> RefreshAccessTokenResponse, {nullable: true})
+   async refreshAcessToken(
+     @Ctx() {req, redis, res}: MyContext,
+   ): Promise<RefreshAccessTokenResponse | null> {
+     const refreshToken = req.cookies.refreshToken;
+     if(!refreshToken) return null;
+
+     let tokenData: any = null;
+     try {
+       tokenData = jwt.verify(refreshToken, REFRESH_JWT_SECRET_KEY);
+     } catch(e) {
+       console.log(e);
+       return null;
+     }
+     if(!tokenData) return null;
+
+     const storedRefreshToken = await redis.get(String(tokenData.userId));
+     if(!storedRefreshToken) return null;
+     if(storedRefreshToken !== refreshToken) return null;
+
+     const user = await User.findOneByOrFail({id: tokenData.userId});
+     if(!user) return null;
+
+     const newAccessToken = createAccessToken(user); //액세스 토큰 생성
+     const newRefreshToken = createRefreshToken(user); //리프레시 토큰 생성
+     // 리프레시 토큰 redis 저장
+     await redis.set(String(user.id), newRefreshToken);
+
+     //쿠키로 리프레시 토큰 전송
+     res.cookie('refreshtoken', newRefreshToken, {
+       httpOnly: true,
+       secure: true,
+       sameSite: 'lax'
+     })
+
+     return {accessToken: newAccessToken};
+   }
 }
