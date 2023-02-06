@@ -103,7 +103,7 @@ export class UserResolver {
     } 
 
     @Mutation(()=> RefreshAccessTokenResponse, {nullable: true})
-   async refreshAcessToken(
+   async refreshAccessToken(
      @Ctx() {req, redis, res}: MyContext,
    ): Promise<RefreshAccessTokenResponse | null> {
      const refreshToken = req.cookies.refreshToken;

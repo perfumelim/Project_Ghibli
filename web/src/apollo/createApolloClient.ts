@@ -9,11 +9,20 @@ import {
 import { createApolloCache } from "./createApolloCache";
 import {onError} from '@apollo/client/link/error';
 import {setContext} from '@apollo/client/link/context';
+import { refreshAccessToken } from './auth';
 
+let apolloClient: ApolloClient<NormalizedCacheObject>;
 
-const errorLink = onError(({graphQLErrors, networkError, operation})=> {
+const errorLink = onError(({graphQLErrors, networkError, operation, forward})=> {
   if(graphQLErrors) {
+    if(graphQLErrors.find((err)=> err.message === 'access token expired')) {
+      return fromPromise(refreshAccessToken(apolloClient, operation))
+      .filter((result)=> !!result)
+      .flatMap(()=> forward(operation))
+    }
+
     graphQLErrors.forEach(({message, locations, path})=> 
+     // eslint-disable-next-line no-console
     console.log(
       `[GraphQL error]: => ${operation.operationName}
       Message: ${message}, Query: ${path}, Location: ${JSON.stringify(
