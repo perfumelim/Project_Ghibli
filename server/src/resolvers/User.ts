@@ -6,6 +6,7 @@ import { Arg, Ctx, Field, InputType, Mutation, ObjectType, Query, Resolver, UseM
 import User from "../entities/User";
 import { createAccessToken, createRefreshToken, REFRESH_JWT_SECRET_KEY, setRefreshTokenHeader } from "../utils/jwt-auth";
 import { isAuthenticated } from "../middlewares/isAuthenticated";
+import redis from "src/redis/redis-cilent";
 
 @InputType()
 export class SignUpInput {
@@ -102,6 +103,18 @@ export class UserResolver {
       return {user, accessToken};
     } 
 
+      @Mutation(()=> Boolean)
+      @UseMiddleware(isAuthenticated)
+      async logout(
+        @Ctx() { verifiedUser, res, redis} : MyContext,
+      ): Promise<boolean> {
+        if(verifiedUser) {
+          setRefreshTokenHeader(res, ''); // 리프레시 토큰 쿠키 제거
+          await redis.del(String(verifiedUser.userId)); // redis 리프레시 토큰 제거
+        }
+        return true;
+    }
+
     @Mutation(()=> RefreshAccessTokenResponse, {nullable: true})
    async refreshAccessToken(
      @Ctx() {req, redis, res}: MyContext,
@@ -139,4 +152,5 @@ export class UserResolver {
 
      return {accessToken: newAccessToken};
    }
+
 }
