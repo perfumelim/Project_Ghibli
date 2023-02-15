@@ -10,12 +10,14 @@ import {
   JwtVerifiedUser,
   verifyAccessTokenFromReqHeaders,
 } from '../utils/jwt-auth';
+import { createCutVoteLoader } from '../dataloaders/cutVoteLoader';
 
 export interface MyContext {
   req: Request;
   res: Response;
   verifiedUser: JwtVerifiedUser;
   redis: typeof redis;
+  cutVoteLoader: ReturnType<typeof createCutVoteLoader>;
 }
 
 const createApolloServer = async (): Promise<ApolloServer> => {
@@ -31,7 +33,8 @@ const createApolloServer = async (): Promise<ApolloServer> => {
         req,
         res,
         verifiedUser: verified,
-        redis
+        redis,
+        cutVoteLoader: createCutVoteLoader(),
       };
     },
   });
