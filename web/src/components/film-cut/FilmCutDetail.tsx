@@ -1,6 +1,18 @@
-import { AspectRatio, Box, Button, Text, Flex, Heading, HStack, Image, useColorModeValue } from '@chakra-ui/react';
+import {
+  AspectRatio,
+  Box,
+  Button,
+  Text,
+  Flex,
+  Heading,
+  HStack,
+  Image,
+  useColorModeValue,
+  useToast,
+} from '@chakra-ui/react';
+import { useMemo } from 'react';
 import { FaHeart } from 'react-icons/fa';
-import { CutDocument, CutQuery, CutQueryVariables, useVoteMutation } from '../../generated/graphql';
+import { CutDocument, CutQuery, CutQueryVariables, useMeQuery, useVoteMutation } from '../../generated/graphql';
 
 interface FilmCutDetailProps {
   cutImg: string;
@@ -10,6 +22,7 @@ interface FilmCutDetailProps {
 }
 
 export function FilmCutDetail({ cutImg, cutId, isVoted = false, votesCount = 0 }: FilmCutDetailProps) {
+  const toast = useToast();
   const voteButtonColor = useColorModeValue('gray.500', 'gray.400');
   const [vote, { loading: voteLoading }] = useVoteMutation({
     variables: { cutId },
@@ -39,6 +52,13 @@ export function FilmCutDetail({ cutImg, cutId, isVoted = false, votesCount = 0 }
       }
     },
   });
+
+  const accessToken = localStorage.getItem('access_token');
+  const { data: userData } = useMeQuery({ skip: !accessToken });
+  const isLoggedIn = useMemo(() => {
+    if (accessToken) return userData?.me?.id;
+    return false;
+  }, [accessToken, userData?.me?.id]);
   return (
     <Box>
       <AspectRatio ratio={16 / 9}>
@@ -53,7 +73,15 @@ export function FilmCutDetail({ cutImg, cutId, isVoted = false, votesCount = 0 }
               aria-label="like-this-cut-button"
               leftIcon={<FaHeart />}
               isLoading={voteLoading}
-              onClick={() => vote()}
+              onClick={() => {
+                if (isLoggedIn) vote();
+                else {
+                  toast({
+                    status: 'warning',
+                    description: '좋아요는 로그인한 이후 가능합니다.',
+                  });
+                }
+              }}
             >
               <Text>{votesCount}</Text>
             </Button>
