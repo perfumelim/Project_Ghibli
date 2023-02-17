@@ -6,7 +6,6 @@ import { Arg, Ctx, Field, InputType, Mutation, ObjectType, Query, Resolver, UseM
 import User from "../entities/User";
 import { createAccessToken, createRefreshToken, REFRESH_JWT_SECRET_KEY, setRefreshTokenHeader } from "../utils/jwt-auth";
 import { isAuthenticated } from "../middlewares/isAuthenticated";
-import redis from "src/redis/redis-cilent";
 
 @InputType()
 export class SignUpInput {

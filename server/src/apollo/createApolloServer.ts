@@ -6,12 +6,12 @@ import { buildSchema } from 'type-graphql';
 import { CutResolver } from '../resolvers/Cut';
 import { FilmResolver } from '../resolvers/Film';
 import { UserResolver } from '../resolvers/User';
+import { CutReviewResolver } from '../resolvers/CutReview';
 import {
   JwtVerifiedUser,
   verifyAccessTokenFromReqHeaders,
 } from '../utils/jwt-auth';
 import { createCutVoteLoader } from '../dataloaders/cutVoteLoader';
-
 export interface MyContext {
   req: Request;
   res: Response;
@@ -23,7 +23,7 @@ export interface MyContext {
 const createApolloServer = async (): Promise<ApolloServer> => {
   return new ApolloServer<MyContext>({
     schema: await buildSchema({
-      resolvers: [FilmResolver, CutResolver, UserResolver],
+      resolvers: [FilmResolver, CutResolver, UserResolver, CutReviewResolver],
     }),
     plugins: [ApolloServerPluginLandingPageLocalDefault()],
     context: ({ req, res }) => {

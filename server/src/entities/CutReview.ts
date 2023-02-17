@@ -17,11 +17,11 @@ export class CutReview extends BaseEntity {
   @Column({comment: '명장면 번호'})
   cutId: number;
 
-  @Field(()=> User)
-  @ManyToOne(()=> User, (user) => user.cutReviews)
+  @Field(() => User)
+  @ManyToOne(() => User, (user) => user.cutReviews)
   user: User;
 
-  @RelationId((cutReview: CutReview)=> cutReview.user)
+  @RelationId((cutReview: CutReview) => cutReview.user)
   userId: number;
 
   @Field(()=> String, {description: '생성 일자'})
