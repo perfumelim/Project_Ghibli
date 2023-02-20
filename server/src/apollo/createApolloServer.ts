@@ -24,6 +24,7 @@ const createApolloServer = async (): Promise<ApolloServer> => {
   return new ApolloServer<MyContext>({
     schema: await buildSchema({
       resolvers: [FilmResolver, CutResolver, UserResolver, CutReviewResolver],
+      validate: { forbidUnknownValues: false }
     }),
     plugins: [ApolloServerPluginLandingPageLocalDefault()],
     context: ({ req, res }) => {

@@ -95,8 +95,8 @@ export class CutReviewResolver implements ResolverInterface<CutReview> {
     let realTake = 2;
     let reviewHistory: CutReview | undefined;
     if (verifiedUser && verifiedUser.userId) {
-      reviewHistory = await CutReview.findOneByOrFail({
-     user: { id: verifiedUser.userId }, cutId ,
+      reviewHistory = await CutReview.findOneOrFail({
+        where: { user: { id: verifiedUser.userId }, cutId }
       });
     }
     if (reviewHistory) {
