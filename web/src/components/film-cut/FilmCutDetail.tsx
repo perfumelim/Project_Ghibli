@@ -17,6 +17,7 @@ import { useMemo } from 'react';
 import { FaHeart } from 'react-icons/fa';
 import { CutDocument, CutQuery, CutQueryVariables, useMeQuery, useVoteMutation } from '../../generated/graphql';
 import { FilmCutReview } from './FilmCutReview';
+import FilmCutReviewDeleteAlert from './FilmCutReviewDelete';
 import { FilmCutReviewRegiModal } from './FilmCutReviewRegiModal';
 
 interface FilmCutDetailProps {
@@ -122,6 +123,11 @@ export function FilmCutDetail({ cutImg, cutId, isVoted = false, votesCount = 0, 
         </Box>
       </Box>
       <FilmCutReviewRegiModal cutId={cutId} isOpen={reviewRegiDialog.isOpen} onClose={reviewRegiDialog.onClose} />
+      <FilmCutReviewDeleteAlert
+        target={reviews?.find((review) => review.isMine)}
+        isOpen={deleteAlert.isOpen}
+        onClose={deleteAlert.onClose}
+      />
     </Box>
   );
 }
