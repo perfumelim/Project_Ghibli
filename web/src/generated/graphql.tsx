@@ -307,6 +307,13 @@ export type CutQuery = (
       { __typename?: 'Film' }
       & Pick<Film, 'id' | 'title'>
     )> }
+  )>, cutReviews: Array<(
+    { __typename?: 'CutReview' }
+    & Pick<CutReview, 'id' | 'contents' | 'isMine'>
+    & { user: (
+      { __typename?: 'User' }
+      & Pick<User, 'username' | 'email'>
+    ) }
   )> }
 );
 
@@ -598,6 +605,15 @@ export const CutDocument = gql`
     }
     votesCount
     isVoted
+  }
+  cutReviews(cutId: $cutId) {
+    id
+    contents
+    isMine
+    user {
+      username
+      email
+    }
   }
 }
     `;

@@ -9,4 +9,14 @@ query cut($cutId: Int!) {
     votesCount
     isVoted
   }
+
+  cutReviews(cutId: $cutId) {
+    id
+    contents
+    isMine
+    user {
+      username
+      email
+    }
+  }
 }
