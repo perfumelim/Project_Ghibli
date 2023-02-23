@@ -15,7 +15,7 @@ interface FilmCutReviewDeleteAlertProps {
   isOpen: boolean;
   onClose: () => void;
 }
-function FilmCutReviewDeleteAlert({ target, isOpen, onClose }: FilmCutReviewDeleteAlertProps): React.ReactElement {
+function FilmCutReviewDeleteAlert({ target, isOpen, onClose }: FilmCutReviewDeleteAlertProps) {
   const cancelRef = useRef<HTMLButtonElement>(null);
   const [deleteCutReview] = useDeleteCutReviewMutation();
   async function handleDelete() {
