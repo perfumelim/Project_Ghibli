@@ -6,6 +6,8 @@ import { Arg, Ctx, Field, InputType, Mutation, ObjectType, Query, Resolver, UseM
 import User from "../entities/User";
 import { createAccessToken, createRefreshToken, REFRESH_JWT_SECRET_KEY, setRefreshTokenHeader } from "../utils/jwt-auth";
 import { isAuthenticated } from "../middlewares/isAuthenticated";
+import { FileUpload, GraphQLUpload } from "graphql-upload";
+import {createWriteStream} from "fs";
 
 @InputType()
 export class SignUpInput {
@@ -152,4 +154,27 @@ export class UserResolver {
      return {accessToken: newAccessToken};
    }
 
+   @UseMiddleware(isAuthenticated)
+   @Mutation(()=> Boolean)
+   async uploadProfileImage(
+     @Ctx() { verifiedUser} : MyContext,
+     @Arg('file', ()=> GraphQLUpload)
+     {createReadStream, filename}: FileUpload
+   ): Promise<boolean> {
+     const realFileName = verifiedUser.userId + filename;
+     const filePath = `public/${realFileName}`;
+
+     return new Promise((resolve, reject)=>
+     createReadStream()
+     .pipe(createWriteStream(filePath))
+     .on('finish', async ()=> {
+       await User.update(
+         {id: verifiedUser.userId},
+         {profileImage: realFileName}
+       )
+       return resolve(true);
+     })
+     .on('error', ()=> reject(Error('file upload failed')))
+     )
+   }
 }

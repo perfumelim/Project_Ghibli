@@ -29,6 +29,10 @@ export default class User extends BaseEntity {
   @UpdateDateColumn({comment: 'update-date'})
   updatedAt: Date;
 
+  @Column({comment: '프로필 사진 경로', nullable: true})
+  @Field({description: '프로필 사진 경로', nullable: true})
+  profileImage: string;
+
   @OneToMany(()=> CutVote, (cutVote)=> cutVote.user)
   cutVotes: CutVote[];
 
