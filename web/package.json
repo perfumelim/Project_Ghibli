@@ -14,6 +14,7 @@
     "@types/node": "^12.0.0",
     "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.4",
+    "apollo-upload-client": "^17.0.0",
     "framer-motion": "^6.2.9",
     "graphql": "^15.5.1",
     "react": "^18.1.0",
@@ -55,6 +56,7 @@
     "@graphql-codegen/typescript": "^1.23.0",
     "@graphql-codegen/typescript-operations": "^1.18.4",
     "@graphql-codegen/typescript-react-apollo": "^2.3.1",
+    "@types/apollo-upload-client": "^17.0.2",
     "@types/react-lazyload": "^3.2.0",
     "@types/react-router-dom": "^5.3.3"
   }
