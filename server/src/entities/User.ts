@@ -2,6 +2,7 @@ import { Field, Int, ObjectType } from "type-graphql";
 import { BaseEntity, Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { CutReview } from "./CutReview";
 import { CutVote } from "./CutVote";
+import Notification from './Notification';
 
 @ObjectType()
 @Entity()
@@ -38,4 +39,7 @@ export default class User extends BaseEntity {
 
   @OneToMany(()=> CutReview, (cutReview)=> cutReview.user)
   cutReviews: CutReview[];
+
+  @OneToMany(() => Notification, (noti) => noti.user)
+  notifications: Notification[];
 }
