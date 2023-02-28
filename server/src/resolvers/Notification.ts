@@ -1,3 +1,4 @@
+import { MySubscriptionContext } from 'src/apollo/createSubscriptionServer';
 import {
   Arg,
   Ctx,
@@ -53,11 +54,12 @@ export class NotificationResolver {
     filter: ({
       payload,
       context,
-    }: ResolverFilterData<Notification, null, MyContext>) => {
-      console.log('newNotification context: ', context);
-      return true;
-      // if (payload && payload.userId === auth.userId) return true;
-      // return false;
+    }: ResolverFilterData<Notification, null, MySubscriptionContext>) => {
+      const { verifiedUser } = context;
+      if (verifiedUser && payload && payload.userId === verifiedUser.userId) {
+        return true;
+      }
+      return false;
     },
   })
   newNotification(@Root() notificationPayload: Notification): Notification {
